@@ -4,23 +4,25 @@ const cors = require("cors");
 require("dotenv").config();
 
 const Note = require("./models/Note");
+const authRoutes = require("./routes/authRoutes");
 const noteRoutes = require("./routes/noteRoutes");
 
-
 const app = express();
+
+// ✅ MIDDLEWARE FIRST
 app.use(cors());
-const authRoutes = require("./routes/authRoutes");
+app.use(express.json()); // 👈 THIS MUST COME BEFORE ROUTES
+
+// ✅ ROUTES
 app.use("/api/auth", authRoutes);
-
-
-
-app.use(express.json());
 app.use("/api/notes", noteRoutes);
 
+// ✅ TEST ROUTE
 app.get("/", (req, res) => {
   res.send("Notes API Running");
 });
 
+// ✅ DATABASE + SERVER
 mongoose.connect(process.env.MONGO_URL)
   .then(() => {
     console.log("✅ MongoDB connected");
